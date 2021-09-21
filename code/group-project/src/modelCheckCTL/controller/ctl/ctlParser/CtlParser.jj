@@ -1,0 +1,43 @@
+PARSER_BEGIN(CtlParser)
+package modelCheckCTL.controller.ctl.ctlParser;
+
+import java.util.Set;
+
+/* clt parser rules approach from https://github.com/pedrogongora/antelope/blob/master/AntelopeCore/src/antelope/ctl/parser/CTLParser.jj, accessed 9/20 */
+public class CtlParser {
+
+}
+
+PARSER_END(CtlParser)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  <ATOM: ["a"-"z"](["0"-"9"])*>
+}
+
+/** Root production. */
+void Input() :
+{Set states;}
+{
+  Formula() <EOF>
+}
+
+/** Brace counting production. */
+void Formula() :
+{
+    Token token;
+}
+{
+  token=<ATOM>
+        {
+            System.out.println(token);
+        }
+}

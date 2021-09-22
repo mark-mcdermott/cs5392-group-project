@@ -33,6 +33,17 @@ public class State implements Comparable<State>{
         return labelsStr;
     }
 
+    public Boolean hasLabel(Character labelToCheck) {
+        Boolean hasLabel = false;
+        for (Object labelObj : labels ) {
+            Character label = (Character) labelObj;
+            if (label == labelToCheck) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public int compareTo(State state) {
         return this.number.compareTo(state.number);

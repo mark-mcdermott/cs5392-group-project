@@ -6,10 +6,16 @@ import modelCheckCTL.model.kripke.State;
 
 public class ModelCheckInputs {
     private Kripke kripke;
-    private CtlFormula ctlFormula;
+    private String ctlFormula;
     private State stateToCheck;
 
-    public CtlFormula getCtlFormula() {
+    public ModelCheckInputs(Kripke kripke, String ctlFormula, State stateToCheck) {
+        this.kripke = kripke;
+        this.ctlFormula = ctlFormula;
+        this.stateToCheck = stateToCheck;
+    }
+
+    public String getCtlFormula() {
         return ctlFormula;
     }
 
@@ -25,7 +31,7 @@ public class ModelCheckInputs {
         this.stateToCheck = stateToCheck;
     }
 
-    public void setCtlFormula(CtlFormula ctlFormula) {
+    public void setCtlFormula(String ctlFormula) {
         this.ctlFormula = ctlFormula;
     }
 

@@ -20,7 +20,7 @@ public class Main {
         Controller controller = new Controller(model, view);
 
         // run main program
-        controller.runTests();
+        controller.runValidationTestsTests();
         controller.checkModel(args, useFileForModelInput);
         controller.updateView();
    }

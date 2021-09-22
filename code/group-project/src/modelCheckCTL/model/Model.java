@@ -1,12 +1,13 @@
 package modelCheckCTL.model;
 
 import modelCheckCTL.model.kripke.Kripke;
+import modelCheckCTL.model.kripke.State;
 
 public class Model {
 
     private String kripkeFile;
     private String ctlFormula;
-    private String stateToCheck;
+    private State stateToCheck;
     private Kripke kripke;
 
     public String getKripkeFile() {
@@ -25,11 +26,11 @@ public class Model {
         this.ctlFormula = ctlFormula;
     }
 
-    public String getStateToCheck() {
+    public State getStateToCheck() {
         return stateToCheck;
     }
 
-    public void setStateToCheck(String stateToCheck) {
+    public void setStateToCheck(State stateToCheck) {
         this.stateToCheck = stateToCheck;
     }
 

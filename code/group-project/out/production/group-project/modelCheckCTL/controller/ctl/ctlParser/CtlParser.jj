@@ -1,10 +1,19 @@
+options {
+STATIC = false;
+}
+
 PARSER_BEGIN(CtlParser)
 package modelCheckCTL.controller.ctl.ctlParser;
 
 import java.util.Set;
+import modelCheckCTL.controller.ctl.ctlParser.ParseException;
+import modelCheckCTL.model.kripke.Kripke;import modelCheckCTL.model.kripke.State;
+import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
+import static modelCheckCTL.util.Util.getLabelsStr;import static modelCheckCTL.util.Util.printStates;
 
 /* clt parser rules approach from https://github.com/pedrogongora/antelope/blob/master/AntelopeCore/src/antelope/ctl/parser/CTLParser.jj, accessed 9/20 */
 public class CtlParser {
+    private Kripke kripke;
 
 }
 
@@ -20,24 +29,79 @@ SKIP :
 
 TOKEN :
 {
-  <ATOM: ["a"-"z"](["0"-"9"])*>
+      <NOT: "not">
+    | <AND: "and">
+    | <OR: "or">
+    | <IMPLIES: "->">
+    | <AX: "AX">
+    | <AF: "AF">
+    | <AG: "AG">
+    | <EX: "EX">
+    | <EF: "EF">
+    | <EG: "EG">
+    | <A: "A">
+    | <E: "E">
+    | <U: "U">
+    | <LPAREN: "(">
+    | <RPAREN: ")">
+    | <ATOM: ["a"-"z"](["0"-"9"])*>
 }
 
-/** Root production. */
-void Input() :
-{Set states;}
+/** Root production. Returns states in supplied kripke that hold for specified model */
+Set Parse(Kripke kripke):
 {
-  Formula() <EOF>
+ this.kripke = kripke;
+ Set f;
+}
+{
+    f = formula() <EOF>
+    {
+        return f;
+    }
 }
 
-/** Brace counting production. */
-void Formula() :
+Set formula():
+{Set e;}
 {
-    Token token;
+    e = expression() [ binaryPredicate() ]
+    { return e; }
 }
+
+Set expression():
+{Token s;}
 {
-  token=<ATOM>
+        s = <ATOM>
         {
-            System.out.println(token);
+            // System.out.println(this.kripke);
+            // System.out.println("hi");
+            // System.out.println(getLabelsStr(statesWithLabel(kripke.getStates(),'p')));
+            String labelStr = s.toString();
+            Character label = labelStr.charAt(0);
+            Set statesWithLabel = statesWithLabel(this.kripke.getStates(),label);
+            return statesWithLabel;
         }
+    |   <NOT> formula()
+    |   <LPAREN> formula() <RPAREN>
+    |   temporalExpression()
+}
+
+void binaryPredicate():
+{}
+{
+        <AND> formula()
+    |   <OR> formula()
+    |   <IMPLIES> formula()
+}
+
+void temporalExpression():
+{}
+{
+      <AX> formula()
+    | <AF> formula()
+    | <AG> formula()
+    | <EX> formula()
+    | <EF> formula()
+    | <EG> formula()
+    | <A> <LPAREN> formula() <U> formula() <RPAREN>
+    | <E> <LPAREN> formula() <U> formula() <RPAREN>
 }

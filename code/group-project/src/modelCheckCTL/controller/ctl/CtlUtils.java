@@ -1,7 +1,11 @@
 package modelCheckCTL.controller.ctl;
 
+import modelCheckCTL.model.kripke.State;
+
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CtlUtils {
 
@@ -60,6 +64,17 @@ public class CtlUtils {
         return false;
     }
 
+    public static Set statesWithLabel(Set states, Character label) {
+           Set statesWithLabel = new HashSet();
+           for (Object stateObj : states) {
+               State state = (State) stateObj;
+               // System.out.println(state);
+               if (state.hasLabel(label)) {
+                   statesWithLabel.add(state);
+               }
+           }
+           return statesWithLabel;
+       }
 
 
 }

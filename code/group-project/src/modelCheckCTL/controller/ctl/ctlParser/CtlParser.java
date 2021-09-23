@@ -3,6 +3,7 @@
 package modelCheckCTL.controller.ctl.ctlParser;
 
 import java.util.Set;
+import java.util.HashSet;
 import modelCheckCTL.controller.ctl.ctlParser.ParseException;
 import modelCheckCTL.model.kripke.Kripke;import modelCheckCTL.model.kripke.State;
 import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
@@ -15,50 +16,54 @@ public class CtlParser implements CtlParserConstants {
 /** Root production. Returns states in supplied kripke that hold for specified model */
   final public Set Parse(Kripke kripke) throws ParseException {this.kripke = kripke;
  Set f;
-    f = formula();
+    f = formula(this.kripke.getStates());
     jj_consume_token(0);
 {if ("" != null) return f;}
     throw new Error("Missing return statement in function");
 }
 
-  final public Set formula() throws ParseException {Set e;
-    e = expression();
+  final public Set formula(Set states) throws ParseException {Set e;
+ Set b;
+ Set stub = new HashSet();
+    e = expression(states);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AND:
     case OR:
     case IMPLIES:{
-      binaryPredicate();
+      b = binaryPredicate(e, states);
       break;
       }
     default:
       jj_la1[0] = jj_gen;
       ;
     }
-{if ("" != null) return e;}
+// TODO since the lines below are expanding wrong, try moving all the binaryOperator logic here in formula()
+        // if (b != null) return b;
+        // else return e;
+        {if ("" != null) return stub;}
     throw new Error("Missing return statement in function");
 }
 
-  final public Set expression() throws ParseException {Token s;
+  final public Set expression(Set states) throws ParseException {Token s;
+ Set stub = new HashSet();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case ATOM:{
       s = jj_consume_token(ATOM);
-// System.out.println(this.kripke);
-            // System.out.println("hi");
-            // System.out.println(getLabelsStr(statesWithLabel(kripke.getStates(),'p')));
-            String labelStr = s.toString();
+String labelStr = s.toString();
             Character label = labelStr.charAt(0);
-            Set statesWithLabel = statesWithLabel(this.kripke.getStates(),label);
+            Set statesWithLabel = statesWithLabel(states,label);
+            // Set statesWithLabel = statesWithLabel(this.kripke.getStates(),label);
             {if ("" != null) return statesWithLabel;}
       break;
       }
     case NOT:{
       jj_consume_token(NOT);
-      formula();
+      formula(stub);
       break;
       }
     case LPAREN:{
       jj_consume_token(LPAREN);
-      formula();
+      formula(stub);
       jj_consume_token(RPAREN);
       break;
       }
@@ -81,21 +86,24 @@ public class CtlParser implements CtlParserConstants {
     throw new Error("Missing return statement in function");
 }
 
-  final public void binaryPredicate() throws ParseException {
+  final public Set binaryPredicate(Set binarySubject, Set states) throws ParseException {Set f; Set stub = new HashSet();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AND:{
       jj_consume_token(AND);
-      formula();
+      f = formula(states);
+/* TODO do intersection of binarySubject and f here */ {if ("" != null) return stub;}
       break;
       }
     case OR:{
       jj_consume_token(OR);
-      formula();
+      f = formula(states);
+/* TODO do union of binarySubject and f here */ {if ("" != null) return stub;}
       break;
       }
     case IMPLIES:{
       jj_consume_token(IMPLIES);
-      formula();
+      f = formula(states);
+/* TODO do ¬binarySubject ∨ f here */ {if ("" != null) return stub;}
       break;
       }
     default:
@@ -103,55 +111,56 @@ public class CtlParser implements CtlParserConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
 }
 
-  final public void temporalExpression() throws ParseException {
+  final public void temporalExpression() throws ParseException {Set stub = new HashSet();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AX:{
       jj_consume_token(AX);
-      formula();
+      formula(stub);
       break;
       }
     case AF:{
       jj_consume_token(AF);
-      formula();
+      formula(stub);
       break;
       }
     case AG:{
       jj_consume_token(AG);
-      formula();
+      formula(stub);
       break;
       }
     case EX:{
       jj_consume_token(EX);
-      formula();
+      formula(stub);
       break;
       }
     case EF:{
       jj_consume_token(EF);
-      formula();
+      formula(stub);
       break;
       }
     case EG:{
       jj_consume_token(EG);
-      formula();
+      formula(stub);
       break;
       }
     case A:{
       jj_consume_token(A);
       jj_consume_token(LPAREN);
-      formula();
+      formula(stub);
       jj_consume_token(U);
-      formula();
+      formula(stub);
       jj_consume_token(RPAREN);
       break;
       }
     case E:{
       jj_consume_token(E);
       jj_consume_token(LPAREN);
-      formula();
+      formula(stub);
       jj_consume_token(U);
-      formula();
+      formula(stub);
       jj_consume_token(RPAREN);
       break;
       }

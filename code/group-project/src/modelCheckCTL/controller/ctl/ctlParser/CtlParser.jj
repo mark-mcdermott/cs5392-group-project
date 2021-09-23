@@ -6,6 +6,7 @@ PARSER_BEGIN(CtlParser)
 package modelCheckCTL.controller.ctl.ctlParser;
 
 import java.util.Set;
+import java.util.HashSet;
 import modelCheckCTL.controller.ctl.ctlParser.ParseException;
 import modelCheckCTL.model.kripke.Kripke;import modelCheckCTL.model.kripke.State;
 import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
@@ -54,54 +55,68 @@ Set Parse(Kripke kripke):
  Set f;
 }
 {
-    f = formula() <EOF>
+    f = formula(this.kripke.getStates()) <EOF>
     {
         return f;
     }
 }
 
-Set formula():
-{Set e;}
+Set formula(Set states):
 {
-    e = expression() [ binaryPredicate() ]
-    { return e; }
+ Set e;
+ Set b;
+ Set stub = new HashSet();
+}
+{
+    e = expression(states)  [ b = binaryPredicate(e, states) ]
+    {
+        // TODO since the lines below are expanding wrong, try moving all the binaryOperator logic here in formula()
+        // if (b != null) return b;
+        // else return e;
+        return stub;
+    }
 }
 
-Set expression():
-{Token s;}
+Set expression(Set states):
+{
+ Token s;
+ Set stub = new HashSet();
+}
 {
         s = <ATOM>
         {
-            // System.out.println(this.kripke);
-            // System.out.println("hi");
-            // System.out.println(getLabelsStr(statesWithLabel(kripke.getStates(),'p')));
             String labelStr = s.toString();
             Character label = labelStr.charAt(0);
-            Set statesWithLabel = statesWithLabel(this.kripke.getStates(),label);
+            Set statesWithLabel = statesWithLabel(states,label);
+            // Set statesWithLabel = statesWithLabel(this.kripke.getStates(),label);
             return statesWithLabel;
         }
-    |   <NOT> formula()
-    |   <LPAREN> formula() <RPAREN>
+    |   <NOT> formula(stub)
+    |   <LPAREN> formula(stub) <RPAREN>
     |   temporalExpression()
 }
 
-void binaryPredicate():
-{}
+Set binaryPredicate(Set binarySubject, Set states):
+{ Set f; Set stub = new HashSet(); }
 {
-        <AND> formula()
-    |   <OR> formula()
-    |   <IMPLIES> formula()
+        <AND> f = formula(states)
+        { /* TODO do intersection of binarySubject and f here */ return stub; }
+    |   <OR> f = formula(states)
+        { /* TODO do union of binarySubject and f here */ return stub; }
+    |   <IMPLIES> f = formula(states)
+        { /* TODO do ¬binarySubject ∨ f here */ return stub; }
+
 }
 
 void temporalExpression():
-{}
+{ Set stub = new HashSet(); }
 {
-      <AX> formula()
-    | <AF> formula()
-    | <AG> formula()
-    | <EX> formula()
-    | <EF> formula()
-    | <EG> formula()
-    | <A> <LPAREN> formula() <U> formula() <RPAREN>
-    | <E> <LPAREN> formula() <U> formula() <RPAREN>
+      <AX> formula(stub)
+    | <AF> formula(stub)
+    | <AG> formula(stub)
+    | <EX> formula(stub)
+    | <EF> formula(stub)
+    | <EG> formula(stub)
+    | <A> <LPAREN> formula(stub) <U> formula(stub) <RPAREN>
+    | <E> <LPAREN> formula(stub) <U> formula(stub) <RPAREN>
 }

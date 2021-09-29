@@ -12,6 +12,7 @@ import modelCheckCTL.model.ModelCheckInputs;
 import modelCheckCTL.model.formulaObj.FormulaObj;
 import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
 import static modelCheckCTL.controller.ctl.CtlUtils.union;
+import static modelCheckCTL.controller.ctl.CtlUtils.intersection;
 import modelCheckCTL.model.kripke.Kripke;
 
 /* clt parser rules approach from https://github.com/pedrogongora/antelope/blob/master/AntelopeCore/src/antelope/ctl/parser/CTLParser.jj, accessed 9/20 */
@@ -74,7 +75,7 @@ Set formula(Set states):
     Set b = null;
 }
 {
-    e = expression(states) [ b = binaryPredicate(e) ]
+    e = expression(states) [ b = binaryPredicate(e,states) ]
     {
         if (b != null) { return b; }
         else { return e; }
@@ -98,11 +99,11 @@ Set expression(Set states):
         { return new HashSet(); }
 }
 
-Set binaryPredicate(Set subject):
+Set binaryPredicate(Set subject, Set states):
 { Set predicate; }
 {
-        <AND> predicate = formula(subject)
-        { return union(subject,predicate); }
+        <AND> predicate = formula(states)
+        { return intersection(subject,predicate); }
     |   <OR> formula(subject)
         { return new HashSet(); }
     |   <IMPLIES> formula(subject)

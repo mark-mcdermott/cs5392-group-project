@@ -8,6 +8,7 @@ import modelCheckCTL.model.ModelCheckInputs;
 import modelCheckCTL.model.formulaObj.FormulaObj;
 import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
 import static modelCheckCTL.controller.ctl.CtlUtils.union;
+import static modelCheckCTL.controller.ctl.CtlUtils.intersection;
 import modelCheckCTL.model.kripke.Kripke;
 
 /** Token Manager. */

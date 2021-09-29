@@ -9,6 +9,7 @@ import modelCheckCTL.model.ModelCheckInputs;
 import modelCheckCTL.model.formulaObj.FormulaObj;
 import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
 import static modelCheckCTL.controller.ctl.CtlUtils.union;
+import static modelCheckCTL.controller.ctl.CtlUtils.intersection;
 import modelCheckCTL.model.kripke.Kripke;
 
 /* clt parser rules approach from https://github.com/pedrogongora/antelope/blob/master/AntelopeCore/src/antelope/ctl/parser/CTLParser.jj, accessed 9/20 */
@@ -37,7 +38,7 @@ public class CtlParser implements CtlParserConstants {
     case AND:
     case OR:
     case IMPLIES:{
-      b = binaryPredicate(e);
+      b = binaryPredicate(e,states);
       break;
       }
     default:
@@ -91,12 +92,12 @@ Set statesWithLabels = statesWithLabel(states, t);
     throw new Error("Missing return statement in function");
 }
 
-  final public Set binaryPredicate(Set subject) throws ParseException {Set predicate;
+  final public Set binaryPredicate(Set subject, Set states) throws ParseException {Set predicate;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AND:{
       jj_consume_token(AND);
-      predicate = formula(subject);
-{if ("" != null) return union(subject,predicate);}
+      predicate = formula(states);
+{if ("" != null) return intersection(subject,predicate);}
       break;
       }
     case OR:{

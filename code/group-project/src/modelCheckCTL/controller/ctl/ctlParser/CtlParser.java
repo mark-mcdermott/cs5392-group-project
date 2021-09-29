@@ -102,8 +102,8 @@ Set statesWithLabels = statesWithLabel(states, t);
       }
     case OR:{
       jj_consume_token(OR);
-      formula(subject);
-{if ("" != null) return new HashSet();}
+      predicate = formula(states);
+{if ("" != null) return union(subject,predicate);}
       break;
       }
     case IMPLIES:{

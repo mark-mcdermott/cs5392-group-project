@@ -104,8 +104,8 @@ Set binaryPredicate(Set subject, Set states):
 {
         <AND> predicate = formula(states)
         { return intersection(subject,predicate); }
-    |   <OR> formula(subject)
-        { return new HashSet(); }
+    |   <OR> predicate = formula(states)
+        { return union(subject,predicate); }
     |   <IMPLIES> formula(subject)
         { return new HashSet(); }
 }

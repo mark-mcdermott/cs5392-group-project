@@ -6,6 +6,7 @@ import modelCheckCTL.controller.ctl.ctlValidator.CtlValidator;
 import modelCheckCTL.controller.ctl.ctlValidator.ParseException;
 import modelCheckCTL.model.Model;
 import modelCheckCTL.model.ModelCheckInputs;
+import modelCheckCTL.model.formulaObj.FormulaObj;
 import modelCheckCTL.model.kripke.Kripke;
 import modelCheckCTL.model.kripke.State;
 import modelCheckCTL.model.kripke.Transition;
@@ -30,22 +31,19 @@ public class Controller {
           this.view = view;
        }
 
-       public Boolean doModelTestsPassParsing(List filenames, Boolean testAllFiles, Kripke kripke) throws IOException, ParseException, modelCheckCTL.controller.ctl.ctlParser.ParseException {
+       // public Boolean doModelTestsPassParsing(List filenames, Boolean testAllFiles, ModelCheckInputs modelCheckInputs) throws IOException, ParseException, modelCheckCTL.controller.ctl.ctlParser.ParseException {
+    public Boolean doModelTestsPassParsing(List filenames, Boolean testAllFiles, ModelCheckInputs modelCheckInputs) throws IOException, ParseException, modelCheckCTL.controller.ctl.ctlParser.ParseException {
             // read resource file from class loader approach from https://mkyong.com/java/java-read-a-file-from-resources-folder/, accessed 9/18/21
             ClassLoader classLoader = getClass().getClassLoader();
 
             // use this to hard code a single model to check
             if (!testAllFiles) {
-               String hardCodedModel = "p";
-               try {
-                   InputStream stringStream = new ByteArrayInputStream(hardCodedModel.getBytes("UTF-8"));
-                   CtlParser ctlParser = new CtlParser(stringStream);
-                   ctlParser.Parse(kripke);
-                   System.out.println("✅ model test passed parsing: " + hardCodedModel);
-               } catch (IOException e) {
-                    e.printStackTrace();
-                }
-               // use this to test every model in all the model files
+               // String hardCodedModel = "p";
+                // InputStream stringStream = new ByteArrayInputStream(hardCodedModel.getBytes("UTF-8"));
+                CtlParser ctlParser = new CtlParser(modelCheckInputs);
+                ctlParser.Parse(); // no need to use returned states, just seeing if Parse() throws an error or not here
+                System.out.println("✅ model test passed parsing: " + modelCheckInputs.getCtlFormula());
+                // use this to test every model in all the model files
             } else {
 
                int numFiles = 0;
@@ -68,13 +66,12 @@ public class Controller {
                                    ctlFormula = rawLine.replaceAll(";False", "");
                                    ctlFormula = ctlFormula.replaceAll("\\ufeff", "");
                                    InputStream stringStream = new ByteArrayInputStream(ctlFormula.getBytes("UTF-8"));
-                                   CtlParser ctlParser = new CtlParser(stringStream);
+                                   // CtlParser ctlParser = new CtlParser(stringStream);
                                    // System.out.println(filename + ": " + ctlFormula);
-                                   ctlParser.Parse(kripke);
+                                   // ctlParser.Parse(kripke);
+                                   // ctlParser.Parse();
                                }
 
-                           } catch (modelCheckCTL.controller.ctl.ctlParser.ParseException e) {
-                               e.printStackTrace();
                            }
                        }
                    }
@@ -248,25 +245,41 @@ public class Controller {
             return new Transition(elemNum, fromState, toState);
         }
 
-        public void runCtlParser (ModelCheckInputs modelCheckInputs, Boolean testAllFiles) {
+        public void runCtlParser (ModelCheckInputs modelCheckInputs, Boolean testAllFiles) throws modelCheckCTL.controller.ctl.ctlParser.ParseException {
             // read resource file from class loader approach from https://mkyong.com/java/java-read-a-file-from-resources-folder/, accessed 9/18/21
             ClassLoader classLoader = getClass().getClassLoader();
             Set statesThatHold;
 
             // use this to hard code a single model to check
             if (!testAllFiles) {
-               String hardCodedModel = "p";
-               try {
-                   InputStream stringStream = new ByteArrayInputStream(hardCodedModel.getBytes("UTF-8"));
-                   CtlParser ctlParser = new CtlParser(stringStream);
-                   statesThatHold = ctlParser.Parse(modelCheckInputs.getKripke());
-                   System.out.println("States that hold: " + getStatesStr(statesThatHold));
-               } catch (IOException | modelCheckCTL.controller.ctl.ctlParser.ParseException e) {
-                    e.printStackTrace();
-                }
+               // String hardCodedModel = "p";
+
+                CtlParser ctlParser = new CtlParser(modelCheckInputs);
+                statesThatHold = ctlParser.Parse();
+                System.out.println("States that hold: " + getStatesStr(statesThatHold));
+
+//               try {
+//                   CtlParser ctlParser = new CtlParser(modelCheckInputs);
+//                   statesThatHold = ctlParser.Parse();
+//                   System.out.println("States that hold: " + getStatesStr(statesThatHold));
+//               } catch (modelCheckCTL.controller.ctl.ctlParser.ParseException e) {
+//                   e.printStackTrace();
+//               }
+
+//               try {
+//                    // InputStream stringStream = new ByteArrayInputStream(hardCodedModel.getBytes("UTF-8"));
+//                    // ctlParser = new CtlParser(stringStream);
+//                    ctlParser = new CtlParser(modelCheckInputs);
+//                    statesThatHold = ctlParser.Parse();
+//                    // statesThatHold = ctlParser.Parse();
+//                   // FormulaObj statesThatHoldFormulaObj = ctlParser.Parse();
+//                    System.out.println("States that hold: " + getStatesStr(statesThatHold));
+//               } catch (IOException | modelCheckCTL.controller.ctl.ctlParser.ParseException e) {
+//                    //e.printStackTrace();
+//               }
                // use this to test every model in all the model files
             } else {
-
+                /*
                int numFiles = 0;
                int numTests = 0;
                for (Object filenameObj : modelTestFiles) {
@@ -278,29 +291,31 @@ public class Controller {
                            throw new IllegalArgumentException("file not found! " + filename);
                        } else {
                            // read input stream line by line approach from https://stackoverflow.com/a/55420102, accessed 9/18/21
-                           try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                               String rawLine = reader.readLine();
-                               while ((rawLine = reader.readLine()) != null) {
-                                   numTests++;
-                                   rawLine = rawLine.replaceAll("s\\d+;", "");
-                                   rawLine = rawLine.replaceAll(";True", "");
-                                   ctlFormula = rawLine.replaceAll(";False", "");
-                                   ctlFormula = ctlFormula.replaceAll("\\ufeff", "");
-                                   InputStream stringStream = new ByteArrayInputStream(ctlFormula.getBytes("UTF-8"));
-                                   CtlParser ctlParser = new CtlParser(stringStream);
-                                   // System.out.println(filename + ": " + ctlFormula);
-                                   statesThatHold = ctlParser.Parse(modelCheckInputs.getKripke());
-                                   System.out.println("States that hold: " + getStatesStr(statesThatHold));
-                               }
-
-                           } catch (modelCheckCTL.controller.ctl.ctlParser.ParseException e) {
-                               e.printStackTrace();
-                           }
+//                           try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+//                               String rawLine = reader.readLine();
+//                               while ((rawLine = reader.readLine()) != null) {
+//                                   numTests++;
+//                                   rawLine = rawLine.replaceAll("s\\d+;", "");
+//                                   rawLine = rawLine.replaceAll(";True", "");
+//                                   ctlFormula = rawLine.replaceAll(";False", "");
+//                                   ctlFormula = ctlFormula.replaceAll("\\ufeff", "");
+//                                   InputStream stringStream = new ByteArrayInputStream(ctlFormula.getBytes("UTF-8"));
+//                                   // CtlParser ctlParser = new CtlParser(stringStream);
+//                                   // System.out.println(filename + ": " + ctlFormula);
+//                                   // statesThatHold = ctlParser.Parse(modelCheckInputs.getKripke());
+//                                   CtlParser ctlParser = new CtlParser(modelCheckInputs.getKripke(), stringStream);
+//                                   statesThatHold = ctlParser.Parse();
+//                                   System.out.println("States that hold: " + getStatesStr(statesThatHold));
+//                               }
+//
+//                           } catch (modelCheckCTL.controller.ctl.ctlParser.ParseException e) {
+//                               e.printStackTrace();
+//                           }
                        }
                    } catch (IOException e) {
                        e.printStackTrace();
                    }
-               }
+               }*/
                // System.out.println("✅ All model tests passed parsing (" + numTests + " models, " + numFiles + " files)");
             }
             // return statesThatHold;
@@ -343,15 +358,13 @@ public class Controller {
             // System.out.println(kripke);
             State stateToCheck = getStateToCheck(args, kripke); // can be null, in which case we check all states
             model.setStateToCheck(stateToCheck);
-            doModelTestsPassParsing(modelTestFiles, false, model.getKripke());
             String ctlFormula = getModelToCheck(args[1], useFileForModelInput);
             model.setCtlFormula(ctlFormula);
-            validateModel(model.getCtlFormula(), false);
-
-            // Set statesThatHold =
             ModelCheckInputs modelCheckInputs = new ModelCheckInputs(model.getKripke(),model.getCtlFormula(),model.getStateToCheck());
-            runCtlParser(modelCheckInputs, false); // TODO replace param stub with actual model check inputs
-
+            doModelTestsPassParsing(modelTestFiles, false, modelCheckInputs);
+            validateModel(model.getCtlFormula(), false);
+            modelCheckInputs.resetFormulaStream(model.getCtlFormula());
+            runCtlParser(modelCheckInputs, false);
         }
 
         public String getModelToCheck(String modelStr, Boolean useFileForModelInput) throws ParseException, IOException {

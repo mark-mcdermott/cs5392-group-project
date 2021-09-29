@@ -4,11 +4,11 @@ package modelCheckCTL.controller.ctl.ctlParser;
 import java.util.Set;
 import java.util.HashSet;
 import modelCheckCTL.controller.ctl.ctlParser.ParseException;
-import modelCheckCTL.model.kripke.Kripke;
-import modelCheckCTL.model.kripke.State;
+import modelCheckCTL.model.ModelCheckInputs;
+import modelCheckCTL.model.formulaObj.FormulaObj;
 import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
-import static modelCheckCTL.util.Util.getLabelsStr;
-import static modelCheckCTL.util.Util.printStates;
+import static modelCheckCTL.controller.ctl.CtlUtils.union;
+import modelCheckCTL.model.kripke.Kripke;
 
 /** Token Manager. */
 @SuppressWarnings ("unused")

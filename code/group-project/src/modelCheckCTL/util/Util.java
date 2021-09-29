@@ -90,6 +90,15 @@ public class Util {
         return null;
     }
 
-
+    public static Boolean contains(Set states, State state) {
+        Integer stateNum = state.getNumber();
+        for (Object stateObj : states) {
+            State thisState = (State) stateObj;
+            if (thisState.getNumber() == stateNum) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

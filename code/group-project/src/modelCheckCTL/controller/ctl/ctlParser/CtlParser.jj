@@ -13,6 +13,7 @@ import modelCheckCTL.model.formulaObj.FormulaObj;
 import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
 import static modelCheckCTL.controller.ctl.CtlUtils.union;
 import static modelCheckCTL.controller.ctl.CtlUtils.intersection;
+import static modelCheckCTL.controller.ctl.CtlUtils.subtract;
 import modelCheckCTL.model.kripke.Kripke;
 
 /* clt parser rules approach from https://github.com/pedrogongora/antelope/blob/master/AntelopeCore/src/antelope/ctl/parser/CTLParser.jj, accessed 9/20 */
@@ -83,7 +84,10 @@ Set formula(Set states):
 }
 
 Set expression(Set states):
-{ Token t; }
+{
+ Token t;
+ Set f;
+}
 {
         t = <ATOM>
         {
@@ -91,8 +95,11 @@ Set expression(Set states):
             // System.out.println(statesWithLabels);
             return statesWithLabels;
         }
-    |   <NOT> formula(states)
-        { return new HashSet(); }
+    |   <NOT> f = formula(states)
+        {
+            Set notStates = subtract(states,f);
+            return notStates;
+        }
     |   <LPAREN> formula(states) <RPAREN>
         { return new HashSet(); }
     |   temporalExpression(states)

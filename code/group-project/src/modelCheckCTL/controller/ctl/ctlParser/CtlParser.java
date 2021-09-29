@@ -10,6 +10,7 @@ import modelCheckCTL.model.formulaObj.FormulaObj;
 import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
 import static modelCheckCTL.controller.ctl.CtlUtils.union;
 import static modelCheckCTL.controller.ctl.CtlUtils.intersection;
+import static modelCheckCTL.controller.ctl.CtlUtils.subtract;
 import modelCheckCTL.model.kripke.Kripke;
 
 /* clt parser rules approach from https://github.com/pedrogongora/antelope/blob/master/AntelopeCore/src/antelope/ctl/parser/CTLParser.jj, accessed 9/20 */
@@ -51,6 +52,7 @@ if (b != null) { {if ("" != null) return b;} }
 }
 
   final public Set expression(Set states) throws ParseException {Token t;
+ Set f;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case ATOM:{
       t = jj_consume_token(ATOM);
@@ -61,8 +63,9 @@ Set statesWithLabels = statesWithLabel(states, t);
       }
     case NOT:{
       jj_consume_token(NOT);
-      formula(states);
-{if ("" != null) return new HashSet();}
+      f = formula(states);
+Set notStates = subtract(states,f);
+            {if ("" != null) return notStates;}
       break;
       }
     case LPAREN:{

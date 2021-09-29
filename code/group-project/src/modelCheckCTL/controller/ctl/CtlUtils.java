@@ -127,4 +127,15 @@ public class CtlUtils {
         return union;
     }
 
+        public static Set subtract(Set a, Set b) {
+        Set subtract = a;
+        for (Object stateObj : b) {
+            State state = (State) stateObj;
+            if (contains(subtract,state)) {
+                subtract.remove(state);
+            }
+        }
+        return subtract;
+    }
+
 }

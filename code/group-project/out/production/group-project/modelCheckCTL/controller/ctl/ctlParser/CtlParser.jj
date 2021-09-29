@@ -100,10 +100,10 @@ Set expression(Set states):
             Set notStates = subtract(states,f);
             return notStates;
         }
-    |   <LPAREN> formula(states) <RPAREN>
-        { return new HashSet(); }
-    |   temporalExpression(states)
-        { return new HashSet(); }
+    |   <LPAREN> f = formula(states) <RPAREN>
+        { return f; }
+    |   f = temporalExpression(states)
+        { return f; }
 }
 
 Set binaryPredicate(Set subject, Set states):
@@ -117,15 +117,23 @@ Set binaryPredicate(Set subject, Set states):
         { return new HashSet(); }
 }
 
-void temporalExpression(Set s):
-{}
+Set temporalExpression(Set s):
+{ Set f; }
 {
-      <AX> formula(s)
-    | <AF> formula(s)
-    | <AG> formula(s)
-    | <EX> formula(s)
-    | <EF> formula(s)
-    | <EG> formula(s)
-    | <A> <LPAREN> formula(s) <U> formula(s) <RPAREN>
-    | <E> <LPAREN> formula(s) <U> formula(s) <RPAREN>
+      <AX> f = formula(s)
+      { return f; /* TODO: finish this stub */ }
+    | <AF> f = formula(s)
+      { return f; /* TODO: finish this stub */ }
+    | <AG> f = formula(s)
+      { return f; /* TODO: finish this stub */ }
+    | <EX> f = formula(s)
+      { return f; /* TODO: finish this stub */ }
+    | <EF> f = formula(s)
+      { return f; /* TODO: finish this stub */ }
+    | <EG> f = formula(s)
+      { return f; /* TODO: finish this stub */ }
+    | <A> <LPAREN> f = formula(s) <U> f = formula(s) <RPAREN>
+      { return f; /* TODO: finish this stub */ }
+    | <E> <LPAREN> f = formula(s) <U> f = formula(s) <RPAREN>
+      { return f; /* TODO: finish this stub */ }
 }

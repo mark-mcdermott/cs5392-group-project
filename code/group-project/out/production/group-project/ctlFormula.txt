@@ -1,1 +1,1 @@
-not t
+p and (q or t)

@@ -70,9 +70,9 @@ Set notStates = subtract(states,f);
       }
     case LPAREN:{
       jj_consume_token(LPAREN);
-      formula(states);
+      f = formula(states);
       jj_consume_token(RPAREN);
-{if ("" != null) return new HashSet();}
+{if ("" != null) return f;}
       break;
       }
     case AX:
@@ -83,8 +83,8 @@ Set notStates = subtract(states,f);
     case EG:
     case A:
     case E:{
-      temporalExpression(states);
-{if ("" != null) return new HashSet();}
+      f = temporalExpression(states);
+{if ("" != null) return f;}
       break;
       }
     default:
@@ -123,54 +123,62 @@ Set notStates = subtract(states,f);
     throw new Error("Missing return statement in function");
 }
 
-  final public void temporalExpression(Set s) throws ParseException {
+  final public Set temporalExpression(Set s) throws ParseException {Set f;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AX:{
       jj_consume_token(AX);
-      formula(s);
+      f = formula(s);
+{if ("" != null) return f;} /* TODO: finish this stub */
       break;
       }
     case AF:{
       jj_consume_token(AF);
-      formula(s);
+      f = formula(s);
+{if ("" != null) return f;} /* TODO: finish this stub */
       break;
       }
     case AG:{
       jj_consume_token(AG);
-      formula(s);
+      f = formula(s);
+{if ("" != null) return f;} /* TODO: finish this stub */
       break;
       }
     case EX:{
       jj_consume_token(EX);
-      formula(s);
+      f = formula(s);
+{if ("" != null) return f;} /* TODO: finish this stub */
       break;
       }
     case EF:{
       jj_consume_token(EF);
-      formula(s);
+      f = formula(s);
+{if ("" != null) return f;} /* TODO: finish this stub */
       break;
       }
     case EG:{
       jj_consume_token(EG);
-      formula(s);
+      f = formula(s);
+{if ("" != null) return f;} /* TODO: finish this stub */
       break;
       }
     case A:{
       jj_consume_token(A);
       jj_consume_token(LPAREN);
-      formula(s);
+      f = formula(s);
       jj_consume_token(U);
-      formula(s);
+      f = formula(s);
       jj_consume_token(RPAREN);
+{if ("" != null) return f;} /* TODO: finish this stub */
       break;
       }
     case E:{
       jj_consume_token(E);
       jj_consume_token(LPAREN);
-      formula(s);
+      f = formula(s);
       jj_consume_token(U);
-      formula(s);
+      f = formula(s);
       jj_consume_token(RPAREN);
+{if ("" != null) return f;} /* TODO: finish this stub */
       break;
       }
     default:
@@ -178,6 +186,7 @@ Set notStates = subtract(states,f);
       jj_consume_token(-1);
       throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
 }
 
   /** Generated Token Manager. */

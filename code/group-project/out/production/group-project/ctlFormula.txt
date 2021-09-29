@@ -1,1 +1,1 @@
-p and (q or t)
+p -> q

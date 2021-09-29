@@ -27,6 +27,18 @@ public class CtlParser {
 	  this.model = modelCheckInputs.getCtlFormula();
     }
 
+    public static Set or(Set a, Set b) {
+        return union(a,b);
+    }
+
+    public static Set and(Set a, Set b) {
+        return intersection(a,b);
+    }
+
+    public static Set not(Set states, Set a) {
+        return subtract(states,a);
+    }
+
 }
 
 PARSER_END(CtlParser)
@@ -97,8 +109,7 @@ Set expression(Set states):
         }
     |   <NOT> f = formula(states)
         {
-            Set notStates = subtract(states,f);
-            return notStates;
+            return not(states,f);
         }
     |   <LPAREN> f = formula(states) <RPAREN>
         { return f; }
@@ -110,16 +121,20 @@ Set binaryPredicate(Set subject, Set states):
 { Set predicate; }
 {
         <AND> predicate = formula(states)
-        { return intersection(subject,predicate); }
+        { return and(subject,predicate); }
     |   <OR> predicate = formula(states)
-        { return union(subject,predicate); }
-    |   <IMPLIES> formula(subject)
-        { return new HashSet(); }
+        { return or(subject,predicate); }
+    |   <IMPLIES> predicate = formula(subject)
+        {
+            /* TODO: need to test this implies out a bunch - no idea if it's working right */
+            return or(not(states,subject),predicate);  /* (not subject or predicate) */
+        }
 }
 
 Set temporalExpression(Set s):
 { Set f; }
 {
+      /* TODO: these algos are on p. 227 of pdf of textbook */
       <AX> f = formula(s)
       { return f; /* TODO: finish this stub */ }
     | <AF> f = formula(s)

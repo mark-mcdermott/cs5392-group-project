@@ -24,6 +24,18 @@ public class CtlParser implements CtlParserConstants {
           this.model = modelCheckInputs.getCtlFormula();
     }
 
+    public static Set or(Set a, Set b) {
+        return union(a,b);
+    }
+
+    public static Set and(Set a, Set b) {
+        return intersection(a,b);
+    }
+
+    public static Set not(Set states, Set a) {
+        return subtract(states,a);
+    }
+
 /** Root production. */
   final public Set Parse() throws ParseException {Set f;
     f = formula(kripke.getStates());
@@ -64,8 +76,7 @@ Set statesWithLabels = statesWithLabel(states, t);
     case NOT:{
       jj_consume_token(NOT);
       f = formula(states);
-Set notStates = subtract(states,f);
-            {if ("" != null) return notStates;}
+{if ("" != null) return not(states,f);}
       break;
       }
     case LPAREN:{
@@ -100,19 +111,19 @@ Set notStates = subtract(states,f);
     case AND:{
       jj_consume_token(AND);
       predicate = formula(states);
-{if ("" != null) return intersection(subject,predicate);}
+{if ("" != null) return and(subject,predicate);}
       break;
       }
     case OR:{
       jj_consume_token(OR);
       predicate = formula(states);
-{if ("" != null) return union(subject,predicate);}
+{if ("" != null) return or(subject,predicate);}
       break;
       }
     case IMPLIES:{
       jj_consume_token(IMPLIES);
-      formula(subject);
-{if ("" != null) return new HashSet();}
+      predicate = formula(subject);
+{if ("" != null) return or(not(states,subject),predicate);}  /* (not subject or predicate) */
       break;
       }
     default:

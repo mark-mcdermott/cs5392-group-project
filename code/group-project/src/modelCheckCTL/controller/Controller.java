@@ -207,6 +207,13 @@ public class Controller {
                         lineNum++;
                     }
                     kripke.setTransitions(transitions);
+
+                    for (Object transitionObj : transitions) {
+                        Transition transition = (Transition) transitionObj;
+                        State fromState = transition.getFrom();
+                        fromState.addTransition(transition);
+                    }
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {

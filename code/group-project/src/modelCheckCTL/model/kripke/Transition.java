@@ -11,6 +11,18 @@ public class Transition implements Comparable<Transition>{
         this.to = to;
     }
 
+    public Integer getNumber() {
+        return number;
+    }
+
+    public State getFrom() {
+        return from;
+    }
+
+    public State getTo() {
+        return to;
+    }
+
     public String toString() {
         return "t" + number;
     }

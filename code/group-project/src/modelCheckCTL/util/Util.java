@@ -101,4 +101,18 @@ public class Util {
         return false;
     }
 
+    public static Boolean areEqual(Set setA, Set setB) {
+        if (setA.size() == setB.size()) {
+            for (Object stateObj : setA) {
+                State state = (State) stateObj;
+                if (!contains(setB,state)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

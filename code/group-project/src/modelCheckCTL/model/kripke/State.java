@@ -1,5 +1,6 @@
 package modelCheckCTL.model.kripke;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static java.lang.String.valueOf;
@@ -8,9 +9,27 @@ public class State implements Comparable<State>{
 
     private Integer number;
     private Set labels;
+    private Set transitions;
 
     public State(Integer number) {
+        this.transitions = new HashSet();
         this.number = number;
+    }
+
+    public void addTransition(Transition transition) {
+        this.transitions.add(transition);
+    }
+
+    public Boolean hasTransitionTo(State targetState) {
+        Integer transitionStateNum = targetState.getNumber();
+        for (Object transitionObj : this.transitions) {
+            Transition thisTransition = (Transition) transitionObj;
+            Integer thisTransitionNum = thisTransition.getNumber();
+            if (thisTransitionNum == transitionStateNum) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String toString() {
@@ -65,4 +84,7 @@ public class State implements Comparable<State>{
         this.labels = labels;
     }
 
+    public Set getTransitions() {
+        return transitions;
+    }
 }

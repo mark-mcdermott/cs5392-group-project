@@ -6,11 +6,15 @@ import java.util.HashSet;
 import modelCheckCTL.controller.ctl.ctlParser.ParseException;
 import modelCheckCTL.model.ModelCheckInputs;
 import modelCheckCTL.model.formulaObj.FormulaObj;
+import modelCheckCTL.model.kripke.Kripke;
+import modelCheckCTL.model.kripke.State;
+import modelCheckCTL.model.kripke.Transition;
 import static modelCheckCTL.controller.ctl.CtlUtils.statesWithLabel;
 import static modelCheckCTL.controller.ctl.CtlUtils.union;
 import static modelCheckCTL.controller.ctl.CtlUtils.intersection;
 import static modelCheckCTL.controller.ctl.CtlUtils.subtract;
-import modelCheckCTL.model.kripke.Kripke;
+import static modelCheckCTL.util.Util.contains;
+import static modelCheckCTL.util.Util.areEqual;
 
 /** Token Manager. */
 @SuppressWarnings ("unused")
